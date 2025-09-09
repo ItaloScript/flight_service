@@ -40,7 +40,5 @@ jobs:
         run: pnpm lint
       - name: Build
         run: pnpm build
-      - name: Prisma Migrate
-        run: npx prisma migrate deploy
       - name: Docker Build
         run: docker build -t flight-service:${{ github.sha }} .
