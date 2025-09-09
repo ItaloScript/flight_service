@@ -151,7 +151,7 @@ availability_searches_total{origin="GRU",destination="BSB"} 23`,
       });
 
       // Atualizar métricas
-      await this.metricsService.updateBusinessMetrics(
+      this.metricsService.updateBusinessMetrics(
         flightsCount,
         legsCount,
         bookingsCount,

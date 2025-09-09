@@ -54,7 +54,7 @@ export class SearchAvailabilityUseCase {
     );
 
     // Filtros de origem/destino, data, cias, red-eye, duração, conexões
-    let filtered = allLegs.filter(({ legs }) => {
+    const filtered = allLegs.filter(({ legs }) => {
       if (!legs.length) return false;
       const firstLeg = legs[0];
       const lastLeg = legs[legs.length - 1];
