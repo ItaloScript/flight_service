@@ -40,19 +40,7 @@ jobs:
         run: pnpm lint
       - name: Build
         run: pnpm build
-      - name: Generate OpenAPI Spec
-        run: pnpm openapi:generate
       - name: Prisma Migrate
         run: npx prisma migrate deploy
       - name: Docker Build
         run: docker build -t flight-service:${{ github.sha }} .
-      - name: Upload Coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage/
-      - name: Upload OpenAPI
-        uses: actions/upload-artifact@v4
-        with:
-          name: openapi-spec
-          path: dist/openapi.json
