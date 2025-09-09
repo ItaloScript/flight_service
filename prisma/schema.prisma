@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Airline {
+  id        Int      @id @default(autoincrement())
+  name      String
+  iata_code String   @unique
+  flights   Flight[]
+}
+
+model Airport {
+  id                 Int      @id @default(autoincrement())
+  name               String
+  iata_code          String   @unique
+  timezone           String
+  originFlights      Flight[] @relation("Origin")
+  destinationFlights Flight[] @relation("Destination")
+}
+
+model Flight {
+  id                   Int     @id @default(autoincrement())
+  flight_number        String
+  airline_id           Int
+  origin_iata          String
+  destination_iata     String
+  departure_time_local String
+  arrival_time_local   String
+  frequency            Int[]
+  airline              Airline @relation(fields: [airline_id], references: [id])
+  origin               Airport @relation("Origin", fields: [origin_iata], references: [iata_code])
+  destination          Airport @relation("Destination", fields: [destination_iata], references: [iata_code])
+  legs                 Leg[]
+}
+
+model Leg {
+  id                     Int            @id @default(autoincrement())
+  flight_id              Int
+  service_date           DateTime
+  departure_datetime_utc DateTime
+  arrival_datetime_utc   DateTime
+  capacity_total         Int
+  seats_available        Int
+  version                Int            @default(1)
+  flight                 Flight         @relation(fields: [flight_id], references: [id])
+  itineraries            ItineraryLeg[]
+}
+
+model Itinerary {
+  id       Int            @id @default(autoincrement())
+  legs     ItineraryLeg[]
+  bookings Booking[]
+}
+
+model ItineraryLeg {
+  id          Int       @id @default(autoincrement())
+  itineraryId Int
+  legId       Int
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
+  leg         Leg       @relation(fields: [legId], references: [id])
+}
+
+model Booking {
+  id           Int       @id @default(autoincrement())
+  user_id      String
+  itinerary_id Int
+  status       String
+  created_at   DateTime  @default(now())
+  version      Int       @default(1)
+  itinerary    Itinerary @relation(fields: [itinerary_id], references: [id])
+}
+
+model IdempotencyKey {
+  key        String   @id
+  value      Json
+  created_at DateTime @default(now())
+}
